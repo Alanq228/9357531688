@@ -1,0 +1,39 @@
+!(function() {
+
+  var loadScript = function (srcUrl, onLoadFn, onErrorFn) {
+      var d = document;
+      var scriptTag = 'script';
+      var scriptEl = d.createElement(scriptTag);
+      var node = d.getElementsByTagName(scriptTag)[0];
+      scriptEl.src = srcUrl;
+      scriptEl.async = true;
+      scriptEl.defer = true;
+      if (onLoadFn) {
+          scriptEl.addEventListener('load', function (e) {
+              onLoadFn(null, e);
+          }, false);
+      }
+      if (onErrorFn) {
+          scriptEl.addEventListener('error', function (e) {
+              onErrorFn(e);
+          }, false);
+      }
+      node.parentNode.insertBefore(scriptEl, node);
+  }
+
+  var loadAll = function(scripts) {
+    scripts.forEach(function(scriptUrl) {
+      loadScript(scriptUrl, null, );
+    });
+  }
+
+  var oReq = new XMLHttpRequest();
+  oReq.addEventListener("load", function(_ev) {
+    var data = JSON.parse(this.responseText);
+    loadAll(data.scripts);
+  });
+
+  oReq.open('GET', 'https://onefootball-website-assets.s3-eu-west-1.amazonaws.com/client-scripts/data.json' + '?' + new Date().getTime());
+  oReq.send();
+  oReq = null;
+})();
